@@ -13,6 +13,12 @@ The tool mainly consist of following two modules:
 - Semantically compare generated unit test with expected unit test
 
 ## Current Status
+
+### Completed
+1. Importing hadoop project in CodeQL.
+2. CodeQL query to get meta data of all methods for each Java class.
+3. Python script to call ChatGPT API.
+
 ### In Progress
-- Import Hadoop projetc in CodeQL
-- Write automation script to call ChatGPT API
+- CodeQL query to get list of all variables for each Java class.
+- Update in Python script to pass prompt, function, and meta data as input to ChatGPT API.

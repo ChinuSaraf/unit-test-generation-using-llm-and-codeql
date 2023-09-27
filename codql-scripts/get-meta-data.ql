@@ -1,3 +1,0 @@
-import java
-
-select "output"
