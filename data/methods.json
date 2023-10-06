@@ -1,0 +1,6 @@
+[
+    {
+        "name": "_attributeStreamIsAllocated",
+        "code": "\tpublic boolean _attributeStreamIsAllocated(int semantics) {\n\t\tthrowIfEmpty();\n\n\t\tint attributeIndex = m_description.getAttributeIndex(semantics);\n\n\t\tif (attributeIndex >= 0 && m_vertexAttributes[attributeIndex] != null)\n\t\t\treturn true;\n\n\t\treturn false;\n\t}"
+    }
+]
