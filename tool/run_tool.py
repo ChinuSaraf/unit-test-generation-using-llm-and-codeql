@@ -5,6 +5,7 @@ import openai
 import datetime
 import time
 import re
+from prompt.tests import Tests
 
 # GET YOUR OPEN AI API KEY FROM : https://platform.openai.com/account/api-keys
 # Save the key in config.json as { "OPENAI_API_KEY": "<KEY>" }
@@ -16,8 +17,10 @@ with open("config.json", "r") as file:
 openai.api_key = config["OPENAI_API_KEY"]
 
 
-def chat(method_dict):
-    init = "For the JAVA function with comments given in the variable 'code' below, write unit test for testing the function. Follow the instructions carefully. Instructions: Import all the required packages, Mock all the functions and classes required by the method."
+def chat(i, task):
+    init = task.get_init_prompt()
+    print(f">>> INIT: {init}")
+    idx = 1
 
     task_prompt = [
         {
@@ -27,15 +30,19 @@ def chat(method_dict):
     ]
 
     while True:
-        prompt = "Generate unit tests for this method:\n `" + \
-            method_dict["code"] + "`"
+        prompt = task.generate_prompt(idx)
+
+        if prompt is None:
+            break
+
+        prompt += task.get_code() if idx == 1 else ""
 
         task_prompt.append({
             "role": "user",
             "content": prompt
         })
 
-        print(f"Prompt: {prompt}")
+        print(f">>> Prompt: {prompt}")
 
         chat = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -47,12 +54,12 @@ def chat(method_dict):
         print(f"Reply: {reply}")
 
         task_prompt.append({"role": "assistant", "content": reply})
-
-        break
+        idx += 1
 
 
 def tests(i, data_json):
-    chat(data_json)
+    test = Tests(i, data_json)
+    chat(i, test)
 
 
 def read_data(data_path):
