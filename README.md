@@ -22,11 +22,22 @@ The tool mainly consists of the following two modules:
 1. Importing Hadoop project in CodeQL.
 2. CodeQL query to get metadata of all methods for each Java class.
 3. Python script to call ChatGPT API.
+4. Developed Query to Fetch all variables and their types for each Java class
+5. Developed Query to Fetch all local variables and their types for each Java method
+6. Developed Query to Fetch all parameters and their types for each Java method
+7. Refactored Python Script. (Added new abstract class-`Prompt` and dedicated `Tests` class)
+8. Changes to Data Files. (Updated attributes in `methods.json` and added new `tests.json` file for multiple unit test prompts)
+9. Enhanced Script Execution by running the script for multiple prompts.
 
 ### In Progress
 
-- CodeQL query to get a list of all variables for each Java class.
-- Update in Python script to pass prompt, function, and metadata as input to ChatGPT API.
+- Fixing issue mentioned in #1 of Current Status section.
+- Exploring methods to valid the output of generated unit tests.
+- Fix issue mentioned in #1 of Current Status section
+- Write a script to translate all the CodeQL query outputs, which are in CSV format to their respective JSON formats.
+- Documenting ChatGPT interactions in an output markdown file to enhance readability and logging purposes.
+- Conclude the validation method for generated unit test results.
+- Following our TA's advice, we aim to create a prompt for generating an executable test file.
 
 ## Setting up
 
@@ -73,7 +84,7 @@ cd tool
 2. Select the **Java** language while importing the project. (This may take a while)
 3. In VS Code, open a command Palette (Ctrl+shift+P) and select **CodeQL: Quick Query**. This will open the `quick-query.ql` file.
 4. Copy the query from [Get Class Methods](https://github.com/ChinuSaraf/unit-test-generation-using-llm-and-codeql/blob/main/codql-scripts/get-methods-of-class.ql) and paste in the `quick-query.ql`
-5. Right Click on an editor and select `CodeQL: Run Query on Selected Database`
+5. Right-Click on an editor and select `CodeQL: Run Query on Selected Database`
 6. This will generate an output similar to [Class to Methods mapping](https://github.com/ChinuSaraf/unit-test-generation-using-llm-and-codeql/blob/main/codeql-query-results/get-methods-of-class.csv)
 
 ### Run the script `run_tool.py`
@@ -84,10 +95,6 @@ python run_tool.py
 
 After running this command, currently, the script will make a call to the ChatGPT asking it to generate unit tests for the funtion `_attributeStreamIsAllocated`.
 
-#### Prompt
-
-![Alt text](/extras/images/prompt-1.png?raw=true "Prompt sample")
-
 #### Output
 
-![Alt text](/extras/images/unit-test-1.png?raw=true "Unit Test generation sample")
+Check the output file: [View output.txt](/tool/output/generated-unit-tests.txt)
