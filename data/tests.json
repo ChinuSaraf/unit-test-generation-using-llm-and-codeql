@@ -1,0 +1,5 @@
+{
+	"init": "For the <LANG> function with comments given in the variable 'code' below, write unit test for testing the function. Follow the instructions carefully. Instructions: Import all the required packages, Mock all the functions and classes required by the method.",
+	"1": "code:",
+	"2": "Refactor the unit test produced, make sure it's runnable and efficient."
+}
