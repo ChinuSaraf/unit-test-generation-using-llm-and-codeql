@@ -6,6 +6,8 @@ where
     c.getFile().getAbsolutePath().matches("%src/main/java%")
     and
     v.getFile().toString() = c.getFile().toString()
+    and
+    v.getAPrimaryQlClass() = "Field"
 select 
     c.getFile().toString(), 
     v.getName(),
