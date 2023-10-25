@@ -36,5 +36,5 @@ class Tests(Prompt):
 
     def store(self, idx, out):
         # Writing to a file based on the language passed in the command line
-        with open("out/" + str(self.lang) + "/" + str(idx) + ".md", "w") as file:
+        with open("output/" + str(idx) + ".md", "w") as file:
             file.write("\n\n".join(out))

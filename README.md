@@ -31,9 +31,7 @@ The tool mainly consists of the following two modules:
 
 ### In Progress
 
-- Fixing issue mentioned in #1 of Current Status section.
-- Exploring methods to valid the output of generated unit tests.
-- Fix issue mentioned in #1 of Current Status section
+- Exploring methods to validate the output of generated unit tests.
 - Write a script to translate all the CodeQL query outputs, which are in CSV format to their respective JSON formats.
 - Documenting ChatGPT interactions in an output markdown file to enhance readability and logging purposes.
 - Conclude the validation method for generated unit test results.
