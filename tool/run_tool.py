@@ -17,9 +17,11 @@ with open("config.json", "r") as file:
 openai.api_key = config["OPENAI_API_KEY"]
 
 
-def chat(i, task):
+def chat(i, task, out):
     init = task.get_init_prompt()
     print(f">>> INIT: {init}")
+    out.append("## Prompt")
+    out.append("**" + init + "**")
     idx = 1
 
     task_prompt = [
@@ -32,8 +34,12 @@ def chat(i, task):
     while True:
         prompt = task.generate_prompt(idx)
 
-        if prompt is None:
-            break
+        # To print the method body inside a code block in the output
+        if idx == 1:
+            out.append("**" + prompt + "**")
+            out.append('```')
+            out.append(task.get_code())
+            out.append('```')
 
         prompt += task.get_code() if idx == 1 else ""
 
@@ -53,13 +59,25 @@ def chat(i, task):
 
         print(f"Reply: {reply}")
 
+        if idx != 1:
+            out.append("## Prompt")
+            out.append("**" + prompt + "**")
+        out.append("## Response")
+        out.append(reply)
+
         task_prompt.append({"role": "assistant", "content": reply})
         idx += 1
 
+        if not task.parse_response(idx, reply):
+            task.store(i, out)
+            break
 
-def tests(i, data_json):
+
+def tests(i, data_json, out):
+    out.append("# Task: Generate Tests")
+    out.append("---")
     test = Tests(i, data_json)
-    chat(i, test)
+    chat(i, test, out)
 
 
 def read_data(data_path):
@@ -76,8 +94,9 @@ data_path = "../data/methods.json"
 data_json = read_data(data_path)
 
 for i in range(len(data_json)):
-    # chat(data_json[i])
-
-    tests(i+1, data_json[i])
+    out = []
+    # Unit test generation
+    print(f'Starting UNIT TEST GENERATION task for the object #{i + 1}...')
+    tests(i+1, data_json[i], out)
 
 print(f'Task Completed')
