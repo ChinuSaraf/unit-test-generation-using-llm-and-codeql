@@ -9,7 +9,6 @@ where
     and
     v.getAPrimaryQlClass() = "Field"
 select 
-    c.getFile().toString(), 
-    v.getName(),
-    v.getType().toString(),
-    c.getFile().getAbsolutePath().toString()
+    c.getQualifiedName() as clsQualifiedName,
+    v.getName() as varName,
+    v.getType().toString() as varType

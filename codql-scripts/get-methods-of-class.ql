@@ -6,8 +6,7 @@ where
     c.getFile().getAbsolutePath().matches("%src/main/java%")
     and
     m.getFile() = c.getFile()
-select 
-    c.getFile().toString(),
-    m.getQualifiedName(),
-    m.getReturnType().toString(),
-    c.getFile().getAbsolutePath().toString()
+select
+    c.getQualifiedName() as clsQualifiedName,
+    m.getQualifiedName() as methodQualifiedName,
+    m.getReturnType().toString() as methodReturnType
