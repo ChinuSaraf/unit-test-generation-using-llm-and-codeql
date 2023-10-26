@@ -32,11 +32,9 @@ def get_primitive_datatype(data_type):
         filtered_cls = filtered_cls.replace('?', '')
         filtered_cls = filtered_cls.replace('extends', '')
         filtered_all_classes.append(filtered_cls)
-    all_primitive_datatypes = list(filter(lambda i: i not in remove_keywords, filtered_all_classes))
+    all_primitive_datatypes = list(
+        filter(lambda i: i not in remove_keywords, filtered_all_classes))
     print(all_primitive_datatypes)
 
 
-get_primitive_datatype("byte[]")
-
-
-
+get_primitive_datatype("Map<Map<Class1, Class2>, Map<Class3, Class4>>")
