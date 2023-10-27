@@ -1,5 +1,9 @@
 config.json
 .DS_Store
 .idea
+<<<<<<< HEAD
 __pycache__
 class-metadata.json
+=======
+__pycache__
+>>>>>>> 31716ab7e2b1a2ac9914702d057a8f189160bb3c
