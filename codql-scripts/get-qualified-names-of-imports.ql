@@ -1,6 +1,6 @@
 import java
 
-from 
+from
     Class c, ImportType i
 where
     i.getFile() = c.getFile()
@@ -9,4 +9,6 @@ where
 select
     c.getQualifiedName(),
     i.getImportedType().toString(),
-    i.getImportedType().getQualifiedName()
+    i.getImportedType().getQualifiedName(),
+    i.getImportedType().getFile().getRelativePath(),
+    c.getFile().getRelativePath()
