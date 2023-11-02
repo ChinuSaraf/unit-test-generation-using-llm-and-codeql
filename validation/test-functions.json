@@ -1,0 +1,7 @@
+[
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.getFileLinkStatus",
+        "serviceName": "hadoop-common-project/hadoop-common",
+        "noOfParameters": 1
+    }
+]
