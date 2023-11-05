@@ -3,4 +3,4 @@ config.json
 .idea
 __pycache__
 class-metadata.json
-method.metadata.json
+method-metadata.json
