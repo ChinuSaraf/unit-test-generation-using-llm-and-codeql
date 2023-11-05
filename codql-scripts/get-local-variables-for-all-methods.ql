@@ -1,7 +1,6 @@
 import semmle.code.java.Statement
 import java
 
-
 from
     Class c, LocalVariableDeclStmt s, Method m
 
@@ -17,8 +16,8 @@ where
     s.getEnclosingCallable().getQualifiedName()= m.getQualifiedName()
     
 select
-    c.getFile().toString(),
-    m.getQualifiedName(),
-    s.getVariable(1).getName(),
-    s.getVariable(1).getType().toString(),
-    s.getVariable(1)
+    c.getQualifiedName() as clsQualifiedName,
+    m.getQualifiedName() as methodQualifiedName,
+    s.getVariable(1).getName() as varName,
+    s.getVariable(1).getType().toString() as varType,
+    c.getFile().getRelativePath() as relativePath

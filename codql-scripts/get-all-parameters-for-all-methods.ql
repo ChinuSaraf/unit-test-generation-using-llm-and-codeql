@@ -11,6 +11,7 @@ where
     m.getFile() = c.getFile()
     
 select
-    c.getFile().toString(),
-    m.getQualifiedName(),
-    m.paramsString()
+    c.getQualifiedName() as clsQualifiedName,
+    m.getQualifiedName() as methodQualifiedName,
+    m.paramsString() as params,
+    c.getFile().getRelativePath() as relativePath

@@ -9,4 +9,5 @@ where
 select
     c.getQualifiedName() as clsQualifiedName,
     m.getQualifiedName() as methodQualifiedName,
-    m.getReturnType().toString() as methodReturnType
+    m.getReturnType().toString() as methodReturnType,
+    c.getFile().getRelativePath() as relativePath

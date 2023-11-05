@@ -11,4 +11,5 @@ where
 select 
     c.getQualifiedName() as clsQualifiedName,
     v.getName() as varName,
-    v.getType().toString() as varType
+    v.getType().toString() as varType,
+    c.getFile().getRelativePath() as relativePath
