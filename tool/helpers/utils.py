@@ -132,7 +132,6 @@ def remove_vars_qlf_names(vars):
 
 
 def get_class_data(class_key, class_json):
-    print(f'{class_key}')
     # Fetch class if present
     if not class_json.get(class_key):
         return "-1", "", ""
@@ -209,7 +208,7 @@ def get_method_data(method_key, methods_json, class_json):
     return "1", params, vars
 
 
-def get_metadata(service_name, func_qual_name, level):
+def get_metadata(service_name, func_qual_name):
     CLASS_JSON_FILE_PATH = "../output/json/class-metadata.json"
     METHODS_JSON_FILE_PATH = "../output/json/method-metadata.json"
 
@@ -244,17 +243,17 @@ def get_metadata(service_name, func_qual_name, level):
 
 # Start
 # status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-hdfs-project/hadoop-hdfs-rbf",
-#                                                                                               "org.apache.hadoop.hdfs.server.federation.router.RouterRpcServer.setXAttr", 0)
+#                                                                                               "org.apache.hadoop.hdfs.server.federation.router.RouterRpcServer.setXAttr")
 
-# status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-common-project/hadoop-common",
-#                                                                                               "hadoop-hdfs-project.hadoop-hdfs.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.listOpenFiles", 0)
+# status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-hdfs-project/hadoop-hdfs",
+#                                                                                               "org.apache.hadoop.hdfs.server.datanode.fsdataset.impl.FsDatasetImpl.computeChecksum")
 
 # op = {
-#     # "qualifiedName": class_qual_name,
-#     # "variables": class_vars,
-#     # "methods": class_methods,
-#     "parameters": method_params,
-#     "variables": method_vars
+#     "qualifiedName": class_qual_name,
+#     "variables": class_vars,
+    # "methods": class_methods,
+    # "parameters": method_params,
+    # "variables": method_vars
 # }
 
 # print(f'>>> OP: {op}')
