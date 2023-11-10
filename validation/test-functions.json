@@ -1,9 +1,44 @@
 [
     {
+        "functionQualifiedName": "org.apache.hadoop.fs.viewfs.ViewFs.getHomeDirectory",
+        "serviceName": "hadoop-common-project/hadoop-common",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public Path getHomeDirectory() {\n    if (homeDir == null) {\n      String base = fsState.getHomeDirPrefixValue();\n      if (base == null) {\n        base = \"/user\";\n      }\n      homeDir = (base.equals(\"/\") ?\n        this.makeQualified(new Path(base + ugi.getShortUserName())):\n        this.makeQualified(new Path(base + \"/\" + ugi.getShortUserName())));\n    }\n    return homeDir;\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
         "functionQualifiedName": "org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.getFileLinkStatus",
         "serviceName": "hadoop-common-project/hadoop-common",
-        "noOfParameters": 1,
-        "functionStr": "",
-        "difficultyLevel": ""
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public FileStatus getFileLinkStatus(final Path f)\n     throws AccessControlException, FileNotFoundException,\n     UnsupportedFileSystemException, IOException {\n    InodeTree.ResolveResult<AbstractFileSystem> res =\n      fsState.resolve(getUriPath(f), false); // do not follow mount link\n    return res.targetFileSystem.getFileLinkStatus(res.remainingPath);\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.mkdir",
+        "serviceName": "hadoop-common-project/hadoop-common",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public void mkdir(final Path dir, final FsPermission permission,\n        final boolean createParent) throws IOException {\n      if (theInternalDir.isRoot() && dir == null) {\n        throw new FileAlreadyExistsException(\"/ already exits\");\n      }\n\n      if (this.fsState.getRootFallbackLink() != null) {\n        AbstractFileSystem linkedFallbackFs =\n            this.fsState.getRootFallbackLink().getTargetFileSystem();\n        Path parent = Path.getPathWithoutSchemeAndAuthority(\n            new Path(theInternalDir.fullPath));\n        String leafChild = (InodeTree.SlashPath.equals(dir)) ?\n            InodeTree.SlashPath.toString() :\n            dir.getName();\n        Path dirToCreate = new Path(parent, leafChild);\n        try {\n          // We are here because, the parent dir already exist in the mount\n          // table internal tree. So, let's create parent always in fallback.\n          linkedFallbackFs.mkdir(dirToCreate, permission, true);\n          return;\n        } catch (IOException e) {\n          if (LOG.isDebugEnabled()) {\n            StringBuilder msg = new StringBuilder(\"Failed to create {}\")\n                .append(\" at fallback fs : {}\");\n            LOG.debug(msg.toString(), dirToCreate, linkedFallbackFs.getUri());\n          }\n          throw e;\n        }\n      }\n\n      throw readOnlyMountTable(\"mkdir\", dir);\n    }",
+        "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.s3a.impl.DeleteOperation.queueForDeletion",
+        "serviceName": "hadoop-tools/hadoop-aws",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "private void queueForDeletion(final String key,\n      boolean isDirMarker) throws IOException {\n    LOG.debug(\"Adding object to delete: \\\"{}\\\"\", key);\n    keys.add(new DeleteEntry(key, isDirMarker));\n    if (keys.size() == pageSize) {\n      submitNextBatch();\n    }\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.s3a.impl.CreateFileBuilder.withFlags",
+        "serviceName": "hadoop-tools/hadoop-aws",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public CreateFileBuilder withFlags(EnumSet<CreateFlag> flags) {\n    if (flags.contains(CreateFlag.CREATE)) {\n      create();\n    }\n    if (flags.contains(CreateFlag.APPEND)) {\n      append();\n    }\n    overwrite(flags.contains(CreateFlag.OVERWRITE));\n    return this;\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.s3a.impl.DirMarkerTracker.removeParentMarkers",
+        "serviceName": "hadoop-tools/hadoop-aws",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "private void removeParentMarkers(final Path path,\n      List<Marker> removed) {\n    if (path == null || path.isRoot()) {\n      return;\n    }\n    scanCount++;\n    removeParentMarkers(path.getParent(), removed);\n    final Marker value = leafMarkers.remove(path);\n    if (value != null) {\n      // marker is surplus\n      removed.add(value);\n      if (recordSurplusMarkers) {\n        surplusMarkers.put(path, value);\n      }\n    }\n  }",
+        "difficultyLevel": "difficult"
     }
 ]
