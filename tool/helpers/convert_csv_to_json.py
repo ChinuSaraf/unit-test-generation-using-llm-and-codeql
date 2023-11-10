@@ -21,9 +21,6 @@ def generate_class_methods(class_json) -> None:
     Returns:
         class_json (Dict)
     '''
-    # # JSON object for stored class data
-    # class_json = {
-    # }
 
     # Converting the Class methods csv to json
     CLASS_METHODS_FILENAME = "../../codeql-query-results/class-meta-data/get-methods-of-class.csv"
@@ -45,7 +42,8 @@ def generate_class_methods(class_json) -> None:
                     obj
                 ],
                 "variables": [
-                ]}
+                ]
+            }
 
     return class_json
 
@@ -72,11 +70,10 @@ def generate_class_variables(class_json: Dict, df_imp_cls: object) -> Dict:
             class_json[class_name]["variables"].append(obj)
         else:
             class_json[class_name] = {
-                "methods": [
-                ],
                 "variables": [
                     obj
-                ]
+                ],
+                "methods": []
             }
 
     return class_json
@@ -107,10 +104,12 @@ def generate_methods_parameters(methods_json, df_imp_cls) -> Dict:
 
         types = get_primitive_datatype(paramters)
         types = types[:10]
+
         if len(types) == 0:
             continue
 
         results = df_imp_cls.loc[df_imp_cls["Class Qualified Name"] == row[0]]
+
         if len(results) == 0:
             continue
 
@@ -120,9 +119,7 @@ def generate_methods_parameters(methods_json, df_imp_cls) -> Dict:
             continue
 
         for j, r in op.iterrows():
-
             obj = {
-                # "name": row[1],
                 "type": get_key_for_entity(r["Imported Class Relative Path"], r["Imported Class Qualified Name"])
             }
 
@@ -131,9 +128,9 @@ def generate_methods_parameters(methods_json, df_imp_cls) -> Dict:
                     methods_json[method_name]["parameters"].append(obj)
             else:
                 methods_json[method_name] = {
-                    "parameters": [obj]
+                    "parameters": [obj],
+                    "local_variables": []
                 }
-
     return methods_json
 
 
@@ -175,13 +172,14 @@ def generate_methods_variables(methods_json, df_imp_cls) -> Dict:
                             obj)
                 else:
                     methods_json[method_name] = {
-                        "local_variables": [obj]
+                        "local_variables": [obj],
+                        "parameters": methods_json[method_name]['parameters'] if methods_json[method_name].get("parameters") else []
                     }
             else:
                 methods_json[method_name] = {
-                    "local_variables": [obj]
+                    "local_variables": [obj],
+                    "parameters": []
                 }
-
     return methods_json
 
 
@@ -199,7 +197,7 @@ class_json = generate_class_variables(class_json, df_imported_classes)
 # Write the Class methods and variables JSON to file
 write_to_file("../output/json/class-metadata.json", class_json)
 
-# # Parse Method parameters and variables CSV to generate JSON
+# Parse Method parameters and variables CSV to generate JSON
 methods_json = {
 }
 methods_json = generate_methods_parameters(methods_json, df_imported_classes)

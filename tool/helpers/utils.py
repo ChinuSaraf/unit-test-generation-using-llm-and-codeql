@@ -14,6 +14,13 @@ def get_primitive_datatype(data_type):
                        'Object', 'Class',
                        'T', '?', '[]', '', 'extends']
     all_classes = []
+
+    # Handling `(HttpServletResponse, String, String, String, long, boolean, boolean)` case
+    if data_type[0] == '(':
+        data_type = data_type[1:]
+    if data_type[-1] == ')':
+        data_type = data_type[:len(data_type)-1]
+
     if data_type.find("<") != -1:
         target_classes = data_type.split("<")
         target_classes_level2 = []
@@ -28,7 +35,10 @@ def get_primitive_datatype(data_type):
             else:
                 all_classes.append(cls)
     else:
-        all_classes = [data_type]
+        if ',' in data_type:
+            all_classes = data_type.split(',')
+        else:
+            all_classes = [data_type]
     filtered_all_classes = []
     for cls in all_classes:
         filtered_cls = cls.strip()
@@ -42,7 +52,7 @@ def get_primitive_datatype(data_type):
 
 
 # print(f'{get_primitive_datatype("Map<String,List<Class2>>")}')
-
+# print(f'{get_primitive_datatype("(HttpServletResponse, String, String, String, long, boolean, boolean, Map<String,List<Class2>>)")}')
 # Example input for get_service_from_relative_path (Assuming the system's OS is Windows):
 # hadoop-common-project/hadoop-auth-examples/src/main/java/org/apache/hadoop/security/authentication/examples/WhoClient.java
 # hadoop-auth-examples/src/main/java/org/apache/hadoop/security/authentication/examples/WhoClient.java
@@ -179,8 +189,24 @@ def get_method_data(method_key, methods_json, class_json):
     else:
         local_variables = ""
 
-    local_variables = remove_vars_qlf_names(local_variables)
-    return "1", params, local_variables
+    vars = []
+    for var in local_variables:
+        status, class_vars, class_methods = get_class_data(
+            var['type'], class_json)
+
+        if status == "-1":
+            continue
+
+        class_methods = remove_method_qlf_names(class_methods)
+
+        obj = {
+            "qualifiedName": var['type'],
+            "variables": class_vars,
+            "methods": class_methods
+        }
+        vars.append(obj)
+
+    return "1", params, vars
 
 
 def get_metadata(service_name, func_qual_name, level):
@@ -204,33 +230,34 @@ def get_metadata(service_name, func_qual_name, level):
     # Get class data
     status, class_vars, class_methods = get_class_data(class_key, class_json)
     if status == "-1":
-        return "-1", "", "", "", ""
+        return "-1", "", "", "", "", ""
 
     # Get method data
     status, method_params, method_vars = get_method_data(
         method_key, methods_json, class_json)
 
     if status == "-1":
-        return "-1", class_vars, class_methods, "", ""
+        return "0", class_vars, class_methods, "", "", ""
 
     return "1", class_qual_name, class_vars, class_methods, method_params, method_vars
 
 
 # Start
-status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-hdfs-project/hadoop-hdfs-rbf",
-                                                                                              "org.apache.hadoop.hdfs.server.federation.router.RouterRpcServer.setXAttr", 0)
+# status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-hdfs-project/hadoop-hdfs-rbf",
+#                                                                                               "org.apache.hadoop.hdfs.server.federation.router.RouterRpcServer.setXAttr", 0)
 
-op = {
-    "qualifiedName": class_qual_name,
-    "variables": class_vars,
-    "methods": class_methods,
-    "parameters": method_params,
-    "variables": method_vars
-}
-
-print(f'>>> OP: {op}')
 # status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-common-project/hadoop-common",
-#              "hadoop-hdfs-project.hadoop-hdfs.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.listOpenFiles", 0)
+#                                                                                               "hadoop-hdfs-project.hadoop-hdfs.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.listOpenFiles", 0)
+
+# op = {
+#     # "qualifiedName": class_qual_name,
+#     # "variables": class_vars,
+#     # "methods": class_methods,
+#     "parameters": method_params,
+#     "variables": method_vars
+# }
+
+# print(f'>>> OP: {op}')
 
 # print(f'{extract_method_from_method_qlf_name("org.apache.hadoop.fs.viewfs.ViewFs.<clinit>")}')
 # print(f'{extract_method_from_method_qlf_name("org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.checkPathIsSlash")}')
