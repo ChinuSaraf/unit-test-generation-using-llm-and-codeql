@@ -40,5 +40,26 @@
         "noOfNonPrimitiveParameters": 2,
         "functionStr": "private void removeParentMarkers(final Path path,\n      List<Marker> removed) {\n    if (path == null || path.isRoot()) {\n      return;\n    }\n    scanCount++;\n    removeParentMarkers(path.getParent(), removed);\n    final Marker value = leafMarkers.remove(path);\n    if (value != null) {\n      // marker is surplus\n      removed.add(value);\n      if (recordSurplusMarkers) {\n        surplusMarkers.put(path, value);\n      }\n    }\n  }",
         "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.maven.plugin.util.FileSetUtils.getCommaSeparatedList",
+        "serviceName": "hadoop-maven-plugins",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "private static String getCommaSeparatedList(List<String> list) {\n    StringBuilder buffer = new StringBuilder();\n    String separator = \"\";\n    for (Object e : list) {\n      buffer.append(separator).append(e);\n      separator = \",\";\n    }\n    return buffer.toString();\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.maven.plugin.util.Exec.envToString",
+        "serviceName": "hadoop-maven-plugins",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public static String envToString(Map<String, String> env) {\n    StringBuilder bld = new StringBuilder();\n    bld.append(\"{\");\n    if (env != null) {\n      for (Map.Entry<String, String> entry : env.entrySet()) {\n        String val = entry.getValue();\n        if (val == null) {\n          val = \"\";\n        }\n        bld.append(\"\\n  \").append(entry.getKey()).\n              append(\" = '\").append(val).append(\"'\\n\");\n      }\n    }\n    bld.append(\"}\");\n    return bld.toString();\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.maven.plugin.util.Exec.run",
+        "serviceName": "hadoop-maven-plugins",
+        "noOfNonPrimitiveParameters": 3,
+        "functionStr": "public int run(List<String> command, List<String> output,\n      List<String> errors) {\n    int retCode = 1;\n    ProcessBuilder pb = new ProcessBuilder(command);\n    try {\n      Process p = pb.start();\n      OutputBufferThread stdOut = new OutputBufferThread(p.getInputStream());\n      OutputBufferThread stdErr = new OutputBufferThread(p.getErrorStream());\n      stdOut.start();\n      stdErr.start();\n      retCode = p.waitFor();\n      if (retCode != 0) {\n        mojo.getLog().warn(command + \" failed with error code \" + retCode);\n        for (String s : stdErr.getOutput()) {\n          mojo.getLog().debug(s);\n        }\n      }\n      stdOut.join();\n      stdErr.join();\n      output.addAll(stdOut.getOutput());\n      if (errors != null) {\n        errors.addAll(stdErr.getOutput());\n      }\n    } catch (IOException ioe) {\n      mojo.getLog().warn(command + \" failed: \" + ioe.toString());\n    } catch (InterruptedException ie) {\n      mojo.getLog().warn(command + \" failed: \" + ie.toString());\n    }\n    return retCode;\n  }",
+        "difficultyLevel": "difficult"
     }
 ]
