@@ -61,5 +61,47 @@
         "noOfNonPrimitiveParameters": 3,
         "functionStr": "public int run(List<String> command, List<String> output,\n      List<String> errors) {\n    int retCode = 1;\n    ProcessBuilder pb = new ProcessBuilder(command);\n    try {\n      Process p = pb.start();\n      OutputBufferThread stdOut = new OutputBufferThread(p.getInputStream());\n      OutputBufferThread stdErr = new OutputBufferThread(p.getErrorStream());\n      stdOut.start();\n      stdErr.start();\n      retCode = p.waitFor();\n      if (retCode != 0) {\n        mojo.getLog().warn(command + \" failed with error code \" + retCode);\n        for (String s : stdErr.getOutput()) {\n          mojo.getLog().debug(s);\n        }\n      }\n      stdOut.join();\n      stdErr.join();\n      output.addAll(stdOut.getOutput());\n      if (errors != null) {\n        errors.addAll(stdErr.getOutput());\n      }\n    } catch (IOException ioe) {\n      mojo.getLog().warn(command + \" failed: \" + ioe.toString());\n    } catch (InterruptedException ie) {\n      mojo.getLog().warn(command + \" failed: \" + ie.toString());\n    }\n    return retCode;\n  }",
         "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.DFSUtil.isValidNameForComponent",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public static boolean isValidNameForComponent(String component) {\n    if (component.equals(\".\") ||\n        component.equals(\"..\") ||\n        component.indexOf(\":\") >= 0 ||\n        component.indexOf(\"/\") >= 0) {\n      return false;\n    }\n    return !isReservedPathComponent(component);\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.HAUtil.getNameNodeId",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public static String getNameNodeId(Configuration conf, String nsId) {\n    String namenodeId = conf.getTrimmed(DFS_HA_NAMENODE_ID_KEY);\n    if (namenodeId != null) {\n      return namenodeId;\n    }\n    \n    String suffixes[] = DFSUtil.getSuffixIDs(conf, DFS_NAMENODE_RPC_ADDRESS_KEY,\n        nsId, null, DFSUtil.LOCAL_ADDRESS_MATCHER);\n    if (suffixes == null) {\n      String msg = \"Configuration \" + DFS_NAMENODE_RPC_ADDRESS_KEY + \n          \" must be suffixed with nameservice and namenode ID for HA \" +\n          \"configuration.\";\n      throw new HadoopIllegalArgumentException(msg);\n    }\n    \n    return suffixes[1];\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.HAUtil.isHAEnabled",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public static boolean isHAEnabled(Configuration conf, String nsId) {\n    Map<String, Map<String, InetSocketAddress>> addresses =\n        DFSUtilClient.getHaNnRpcAddresses(conf);\n    if (addresses == null) return false;\n    Map<String, InetSocketAddress> nnMap = addresses.get(nsId);\n    return nnMap != null && nnMap.size() > 1;\n  }",
+        "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.nfs.nfs3.Nfs3Metrics.addWrite",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs-nfs",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public void addWrite(long latencyNanos) {\n    write.add(latencyNanos);\n    for (MutableQuantiles q : writeNanosQuantiles) {\n      q.add(latencyNanos);\n    }\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.nfs.nfs3.Nfs3Metrics.create",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs-nfs",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public static Nfs3Metrics create(Configuration conf, String gatewayName) {\n    String sessionId = conf.get(DFSConfigKeys.DFS_METRICS_SESSION_ID_KEY);\n    MetricsSystem ms = DefaultMetricsSystem.instance();\n    JvmMetrics jm = JvmMetrics.create(gatewayName, sessionId, ms);\n\n    // Percentile measurement is [50th,75th,90th,95th,99th] currently \n    int[] intervals = conf\n        .getInts(NfsConfigKeys.NFS_METRICS_PERCENTILES_INTERVALS_KEY);\n    return ms.register(new Nfs3Metrics(gatewayName, sessionId, intervals, jm));\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.hdfs.nfs.nfs3.Nfs3Utils.writeChannel",
+        "serviceName": "hadoop-hdfs-project/hadoop-hdfs-nfs",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public static void writeChannel(Channel channel, XDR out, int xid) {\n    if (channel == null) {\n      RpcProgramNfs3.LOG\n          .info(\"Null channel should only happen in tests. Do nothing.\");\n      return;\n    }\n    \n    if (RpcProgramNfs3.LOG.isDebugEnabled()) {\n      RpcProgramNfs3.LOG.debug(WRITE_RPC_END + xid);\n    }\n    ByteBuf outBuf = XDR.writeMessageTcp(out, true);\n    channel.writeAndFlush(outBuf);\n  }",
+        "difficultyLevel": "difficult"
     }
 ]
