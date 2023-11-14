@@ -103,5 +103,47 @@
         "noOfNonPrimitiveParameters": 2,
         "functionStr": "public static void writeChannel(Channel channel, XDR out, int xid) {\n    if (channel == null) {\n      RpcProgramNfs3.LOG\n          .info(\"Null channel should only happen in tests. Do nothing.\");\n      return;\n    }\n    \n    if (RpcProgramNfs3.LOG.isDebugEnabled()) {\n      RpcProgramNfs3.LOG.debug(WRITE_RPC_END + xid);\n    }\n    ByteBuf outBuf = XDR.writeMessageTcp(out, true);\n    channel.writeAndFlush(outBuf);\n  }",
         "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.client.AuthenticatedURL$Token.toString",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public String toString() {\n      String value = \"\";\n      HttpCookie authCookie = cookieHandler.getAuthCookie();\n      if (authCookie != null) {\n        value = authCookie.getValue();\n        if (value.startsWith(\"\\\"\")) { // tests don't want the quotes.\n          value = value.substring(1, value.length()-1);\n        }\n      }\n      return value;\n    }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.client.AuthenticatedURL$AuthCookieHandler.setAuthCookie",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "private synchronized void setAuthCookie(HttpCookie cookie) {\n      final HttpCookie oldCookie = authCookie;\n      // will redefine if new cookie is valid.\n      authCookie = null;\n      cookieHeaders = Collections.emptyMap();\n      boolean valid = cookie != null && !cookie.getValue().isEmpty() &&\n          !cookie.hasExpired();\n      if (valid) {\n        // decrease lifetime to avoid using a cookie soon to expire.\n        // allows authenticators to pre-emptively reauthenticate to\n        // prevent clients unnecessarily receiving a 401.\n        long maxAge = cookie.getMaxAge();\n        if (maxAge != -1) {\n          cookie.setMaxAge(maxAge * 9/10);\n          valid = !cookie.hasExpired();\n        }\n      }\n      if (valid) {\n        // v0 cookies value aren't quoted by default but tomcat demands\n        // quoting.\n        if (cookie.getVersion() == 0) {\n          String value = cookie.getValue();\n          if (!value.startsWith(\"\\\"\")) {\n            value = \"\\\"\" + value + \"\\\"\";\n            cookie.setValue(value);\n          }\n        }\n        authCookie = cookie;\n        cookieHeaders = new HashMap<>();\n        cookieHeaders.put(\"Cookie\", Arrays.asList(cookie.toString()));\n      }\n    }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.client.AuthenticatedURL.openConnection",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public HttpURLConnection openConnection(URL url, Token token) throws IOException, AuthenticationException {\n    if (url == null) {\n      throw new IllegalArgumentException(\"url cannot be NULL\");\n    }\n    if (!url.getProtocol().equalsIgnoreCase(\"http\") && !url.getProtocol().equalsIgnoreCase(\"https\")) {\n      throw new IllegalArgumentException(\"url must be for a HTTP or HTTPS resource\");\n    }\n    if (token == null) {\n      throw new IllegalArgumentException(\"token cannot be NULL\");\n    }\n    authenticator.authenticate(url, token);\n\n    // allow the token to create the connection with a cookie handler for\n    // managing session cookies.\n    return token.openConnection(url, connConfigurator);\n  }",
+        "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.registry.client.binding.RegistryTypeUtils.getAddressField",
+        "serviceName": "hadoop-common-project/hadoop-registry",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public static String getAddressField(Map<String, String> address,\n      String field) throws InvalidRecordException {\n    String val = address.get(field);\n    if (val == null) {\n      throw new InvalidRecordException(\"\", \"Missing address field: \" + field);\n    }\n    return val;\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.registry.client.binding.RegistryTypeUtils.retrieveAddressesUriType",
+        "serviceName": "hadoop-common-project/hadoop-registry",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public static List<String> retrieveAddressesUriType(Endpoint epr)\n      throws InvalidRecordException {\n    if (epr == null) {\n      return null;\n    }\n    requireAddressType(ADDRESS_URI, epr);\n    List<Map<String, String>> addresses = epr.addresses;\n    if (addresses.size() < 1) {\n      throw new InvalidRecordException(epr.toString(),\n          \"No addresses in endpoint\");\n    }\n    List<String> results = new ArrayList<String>(addresses.size());\n    for (Map<String, String> address : addresses) {\n      results.add(getAddressField(address, ADDRESS_URI));\n    }\n    return results;\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.registry.client.binding.RegistryUtils.statChildren",
+        "serviceName": "hadoop-common-project/hadoop-registry",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public static Map<String, RegistryPathStatus> statChildren(\n      RegistryOperations registryOperations,\n      String path)\n      throws PathNotFoundException,\n      InvalidPathnameException,\n      IOException {\n    List<String> childNames = registryOperations.list(path);\n    Map<String, RegistryPathStatus> results =\n        new HashMap<String, RegistryPathStatus>();\n    for (String childName : childNames) {\n      String child = join(path, childName);\n      try {\n        RegistryPathStatus stat = registryOperations.stat(child);\n        results.put(childName, stat);\n      } catch (PathNotFoundException pnfe) {\n        if (LOG.isDebugEnabled()) {\n          LOG.debug(\"stat failed on {}: moved? {}\", child, pnfe, pnfe);\n        }\n        // and continue\n      }\n    }\n    return results;\n  }",
+        "difficultyLevel": "difficult"
     }
 ]
