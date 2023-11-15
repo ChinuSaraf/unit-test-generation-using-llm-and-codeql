@@ -21,10 +21,10 @@
         "difficultyLevel": "difficult"
     },
     {
-        "functionQualifiedName": "org.apache.hadoop.fs.s3a.impl.DeleteOperation.queueForDeletion",
+        "functionQualifiedName": "org.apache.hadoop.fs.s3a.impl.ChangeTracker.toString",
         "serviceName": "hadoop-tools/hadoop-aws",
         "noOfNonPrimitiveParameters": 0,
-        "functionStr": "private void queueForDeletion(final String key,\n      boolean isDirMarker) throws IOException {\n    LOG.debug(\"Adding object to delete: \\\"{}\\\"\", key);\n    keys.add(new DeleteEntry(key, isDirMarker));\n    if (keys.size() == pageSize) {\n      submitNextBatch();\n    }\n  }",
+        "functionStr": "public String toString() {\n    final StringBuilder sb = new StringBuilder(\n        \"ChangeTracker{\");\n    sb.append(policy);\n    sb.append(\", revisionId='\").append(revisionId).append('\\'');\n    sb.append('}');\n    return sb.toString();\n  }",
         "difficultyLevel": "easy"
     },
     {
@@ -56,10 +56,10 @@
         "difficultyLevel": "medium"
     },
     {
-        "functionQualifiedName": "org.apache.hadoop.maven.plugin.util.Exec.run",
+        "functionQualifiedName": "org.apache.hadoop.maven.plugin.cmakebuilder.CompileMojo.validateSourceParams",
         "serviceName": "hadoop-maven-plugins",
-        "noOfNonPrimitiveParameters": 3,
-        "functionStr": "public int run(List<String> command, List<String> output,\n      List<String> errors) {\n    int retCode = 1;\n    ProcessBuilder pb = new ProcessBuilder(command);\n    try {\n      Process p = pb.start();\n      OutputBufferThread stdOut = new OutputBufferThread(p.getInputStream());\n      OutputBufferThread stdErr = new OutputBufferThread(p.getErrorStream());\n      stdOut.start();\n      stdErr.start();\n      retCode = p.waitFor();\n      if (retCode != 0) {\n        mojo.getLog().warn(command + \" failed with error code \" + retCode);\n        for (String s : stdErr.getOutput()) {\n          mojo.getLog().debug(s);\n        }\n      }\n      stdOut.join();\n      stdErr.join();\n      output.addAll(stdOut.getOutput());\n      if (errors != null) {\n        errors.addAll(stdErr.getOutput());\n      }\n    } catch (IOException ioe) {\n      mojo.getLog().warn(command + \" failed: \" + ioe.toString());\n    } catch (InterruptedException ie) {\n      mojo.getLog().warn(command + \" failed: \" + ie.toString());\n    }\n    return retCode;\n  }",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "static void validateSourceParams(File source, File output)\n      throws MojoExecutionException {\n    String cOutput = null, cSource = null;\n    try {\n      cOutput = output.getCanonicalPath();\n    } catch (IOException e) {\n      throw new MojoExecutionException(\"error getting canonical path \" +\n          \"for output\", e);\n    }\n    try {\n      cSource = source.getCanonicalPath();\n    } catch (IOException e) {\n      throw new MojoExecutionException(\"error getting canonical path \" +\n          \"for source\", e);\n    }\n\n    // This doesn't catch all the bad cases-- we could be following symlinks or\n    // hardlinks, etc.  However, this will usually catch a common mistake.\n    if (cSource.startsWith(cOutput)) {\n      throw new MojoExecutionException(\"The source directory must not be \" +\n          \"inside the output directory (it would be destroyed by \" +\n          \"'mvn clean')\");\n    }\n  }",
         "difficultyLevel": "difficult"
     },
     {
@@ -154,17 +154,59 @@
         "difficultyLevel": "easy"
     },
     {
-        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KeyAuthorizationKeyProvider$KeyACLs.isACLPresent",
+        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KMSACLs.isACLPresent",
         "serviceName": "hadoop-common-project/hadoop-kms",
         "noOfNonPrimitiveParameters": 1,
         "functionStr": "public boolean isACLPresent(String keyName, KeyOpType opType) {\n    return (keyAcls.containsKey(keyName)\n        || defaultKeyAcls.containsKey(opType)\n        || whitelistKeyAcls.containsKey(opType));\n  }",
         "difficultyLevel": "medium"
     },
     {
-        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KeyAuthorizationKeyProvider$KeyACLs.hasAccessToKey",
+        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KMSACLs.hasAccessToKey",
         "serviceName": "hadoop-common-project/hadoop-kms",
         "noOfNonPrimitiveParameters": 2,
         "functionStr": "public boolean hasAccessToKey(String keyName, UserGroupInformation ugi,\n      KeyOpType opType) {\n    boolean access = checkKeyAccess(keyName, ugi, opType)\n        || checkKeyAccess(whitelistKeyAcls, ugi, opType);\n    if (!access) {\n      KMSWebApp.getKMSAudit().unauthorized(ugi, opType, keyName);\n    }\n    return access;\n  }",
+        "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.cosn.ByteBufferInputStream.read",
+        "serviceName": "hadoop-cloud-storage-project/hadoop-cos",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public int read() throws IOException {\n    if (null == this.byteBuffer) {\n      throw new IOException(\"this byte buffer for InputStream is null\");\n    }\n    if (!this.byteBuffer.hasRemaining()) {\n      return -1;\n    }\n    return this.byteBuffer.get() & 0xFF;\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.cosn.CosNFileSystem.open",
+        "serviceName": "hadoop-cloud-storage-project/hadoop-cos",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public FSDataInputStream open(Path f, int bufferSize) throws IOException {\n    FileStatus fs = getFileStatus(f); // will throw if the file doesn't\n    // exist\n    if (fs.isDirectory()) {\n      throw new FileNotFoundException(\"'\" + f + \"' is a directory\");\n    }\n    LOG.info(\"Open the file: [{}] for reading.\", f);\n    Path absolutePath = makeAbsolute(f);\n    String key = pathToKey(absolutePath);\n    long fileSize = store.getFileLength(key);\n    return new FSDataInputStream(new BufferedFSInputStream(\n        new CosNInputStream(this.getConf(), store, statistics, key, fileSize,\n            this.boundedIOThreadPool), bufferSize));\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.fs.cosn.CosNFileSystem.mkdirs",
+        "serviceName": "hadoop-cloud-storage-project/hadoop-cos",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public boolean mkdirs(Path f, FsPermission permission) throws IOException {\n    try {\n      FileStatus fileStatus = getFileStatus(f);\n      if (fileStatus.isDirectory()) {\n        return true;\n      } else {\n        throw new FileAlreadyExistsException(\"Path is a file: \" + f);\n      }\n    } catch (FileNotFoundException e) {\n      validatePath(f);\n    }\n\n    return mkDirRecursively(f, permission);\n  }",
+        "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.util.KerberosName.getDefaultRealm",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public static synchronized String getDefaultRealm() {\n    if (defaultRealm == null) {\n      try {\n        defaultRealm = KerberosUtil.getDefaultRealm();\n      } catch (Exception ke) {\n        LOG.debug(\"Kerberos krb5 configuration not found, setting default realm to empty\");\n        defaultRealm = \"\";\n      }\n    }\n    return defaultRealm;\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.util.KerberosName$Rule.replaceSubstitution",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "static String replaceSubstitution(String base, Pattern from, String to,\n                                      boolean repeat) {\n      Matcher match = from.matcher(base);\n      if (repeat) {\n        return match.replaceAll(to);\n      } else {\n        return match.replaceFirst(to);\n      }\n    }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.security.authentication.client.AuthenticatedURL.openConnection",
+        "serviceName": "hadoop-common-project/hadoop-auth",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public HttpURLConnection openConnection(URL url, Token token) throws IOException, AuthenticationException {\n    if (url == null) {\n      throw new IllegalArgumentException(\"url cannot be NULL\");\n    }\n    if (!url.getProtocol().equalsIgnoreCase(\"http\") && !url.getProtocol().equalsIgnoreCase(\"https\")) {\n      throw new IllegalArgumentException(\"url must be for a HTTP or HTTPS resource\");\n    }\n    if (token == null) {\n      throw new IllegalArgumentException(\"token cannot be NULL\");\n    }\n    authenticator.authenticate(url, token);\n\n    // allow the token to create the connection with a cookie handler for\n    // managing session cookies.\n    return token.openConnection(url, connConfigurator);\n  }",
         "difficultyLevel": "difficult"
     }
 ]
