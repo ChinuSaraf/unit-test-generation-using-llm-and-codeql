@@ -5,6 +5,8 @@ from
 where
     c.getFile().getAbsolutePath().matches("%src/main/java%")
     and
+    m.getDeclaringType().getQualifiedName() = c.getQualifiedName()
+    and
     m.getFile() = c.getFile()
 select
     c.getQualifiedName() as clsQualifiedName,

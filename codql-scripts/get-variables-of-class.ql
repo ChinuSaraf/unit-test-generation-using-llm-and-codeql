@@ -1,11 +1,13 @@
 import java
 
 from 
-    Class c, Variable v
+    Class c, Field v
 where
     c.getFile().getAbsolutePath().matches("%src/main/java%")
     and
-    v.getFile().toString() = c.getFile().toString()
+    v.getDeclaringType().getQualifiedName() = c.getQualifiedName()
+    and
+    v.getFile() = c.getFile()
     and
     v.getAPrimaryQlClass() = "Field"
 select 

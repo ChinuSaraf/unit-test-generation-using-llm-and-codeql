@@ -145,5 +145,26 @@
         "noOfNonPrimitiveParameters": 1,
         "functionStr": "public static Map<String, RegistryPathStatus> statChildren(\n      RegistryOperations registryOperations,\n      String path)\n      throws PathNotFoundException,\n      InvalidPathnameException,\n      IOException {\n    List<String> childNames = registryOperations.list(path);\n    Map<String, RegistryPathStatus> results =\n        new HashMap<String, RegistryPathStatus>();\n    for (String childName : childNames) {\n      String child = join(path, childName);\n      try {\n        RegistryPathStatus stat = registryOperations.stat(child);\n        results.put(childName, stat);\n      } catch (PathNotFoundException pnfe) {\n        if (LOG.isDebugEnabled()) {\n          LOG.debug(\"stat failed on {}: moved? {}\", child, pnfe, pnfe);\n        }\n        // and continue\n      }\n    }\n    return results;\n  }",
         "difficultyLevel": "difficult"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KMSWebServer.getKMSUrl",
+        "serviceName": "hadoop-common-project/hadoop-kms",
+        "noOfNonPrimitiveParameters": 0,
+        "functionStr": "public URL getKMSUrl() {\n    InetSocketAddress addr = httpServer.getConnectorAddress(0);\n    if (null == addr) {\n      return null;\n    }\n    try {\n      return new URL(scheme, addr.getHostName(), addr.getPort(),\n          SERVLET_PATH);\n    } catch (MalformedURLException ex) {\n      throw new RuntimeException(\"It should never happen: \" + ex.getMessage(),\n          ex);\n    }\n  }",
+        "difficultyLevel": "easy"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KeyAuthorizationKeyProvider$KeyACLs.isACLPresent",
+        "serviceName": "hadoop-common-project/hadoop-kms",
+        "noOfNonPrimitiveParameters": 1,
+        "functionStr": "public boolean isACLPresent(String keyName, KeyOpType opType) {\n    return (keyAcls.containsKey(keyName)\n        || defaultKeyAcls.containsKey(opType)\n        || whitelistKeyAcls.containsKey(opType));\n  }",
+        "difficultyLevel": "medium"
+    },
+    {
+        "functionQualifiedName": "org.apache.hadoop.crypto.key.kms.server.KeyAuthorizationKeyProvider$KeyACLs.hasAccessToKey",
+        "serviceName": "hadoop-common-project/hadoop-kms",
+        "noOfNonPrimitiveParameters": 2,
+        "functionStr": "public boolean hasAccessToKey(String keyName, UserGroupInformation ugi,\n      KeyOpType opType) {\n    boolean access = checkKeyAccess(keyName, ugi, opType)\n        || checkKeyAccess(whitelistKeyAcls, ugi, opType);\n    if (!access) {\n      KMSWebApp.getKMSAudit().unauthorized(ugi, opType, keyName);\n    }\n    return access;\n  }",
+        "difficultyLevel": "difficult"
     }
 ]
