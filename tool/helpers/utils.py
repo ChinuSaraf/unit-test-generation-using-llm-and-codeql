@@ -1,12 +1,11 @@
 import json
+import os
 
 # Example inputs for get_primitive_datatype:
 # Map<String, Class1>
 # List<Class1>
 # Map<Class1, Map<String, Class2>>
 # Map<Map<Class1, Class2>, Map<Class3, Class4>> => ["Map", "Map", "Class1, Class2>, Map", "Class3, Class4>>"]
-
-
 def get_primitive_datatype(data_type):
     remove_keywords = ['String', 'int', 'Integer', 'char', 'float', 'long', 'double', 'Double', 'byte', 'boolean',
                        'Map', 'HashMap',
@@ -56,8 +55,6 @@ def get_primitive_datatype(data_type):
 # Example input for get_service_from_relative_path (Assuming the system's OS is Windows):
 # hadoop-common-project/hadoop-auth-examples/src/main/java/org/apache/hadoop/security/authentication/examples/WhoClient.java
 # hadoop-auth-examples/src/main/java/org/apache/hadoop/security/authentication/examples/WhoClient.java
-
-
 def get_service_from_relative_path(relative_path):
     services = relative_path.split("/src/main")
     if len(services) > 1:
@@ -79,8 +76,6 @@ def get_key_for_entity(relative_path, qualified_name):
 #       "org.apache.hadoop.security.authentication.examples.WhoClient"))
 # print(get_key_for_entity(
 #     "hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/fs/viewfs/ViewFs.java", "org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.getFileLinkStatus"))
-
-
 def read_json(filename: str) -> object:
     f = open(filename)
     data = json.load(f)
@@ -241,6 +236,18 @@ def get_metadata(service_name, func_qual_name):
     return "1", class_qual_name, class_vars, class_methods, method_params, method_vars
 
 
+# Sample Input: file_name="Test.java"
+# project_home="F:/Projects/UIUC/CS-527/MP2/hadoop"
+# micro_service="hadoop-common-project/hadoop-common"
+# qualified_name="org.apache.hadoop.fs.viewfs.ViewFs.getHomeDirectory"
+def move_test_file_to_dest(file_name, project_home, micro_service, qualified_name):
+    origin = './output/generated/'+file_name
+    qu_paths = qualified_name.split('.')
+    target_test_loc = micro_service+'/src/test/java/'+qu_paths[0]+'/'+qu_paths[1]+'/'+qu_paths[2]+'/'+file_name
+    target = project_home+target_test_loc
+    os.rename(origin, target)
+
+
 # Start
 # status, class_qual_name, class_vars, class_methods, method_params, method_vars = get_metadata("hadoop-hdfs-project/hadoop-hdfs-rbf",
 #                                                                                               "org.apache.hadoop.hdfs.server.federation.router.RouterRpcServer.setXAttr")
@@ -261,3 +268,4 @@ def get_metadata(service_name, func_qual_name):
 # print(f'{extract_method_from_method_qlf_name("org.apache.hadoop.fs.viewfs.ViewFs.<clinit>")}')
 # print(f'{extract_method_from_method_qlf_name("org.apache.hadoop.fs.viewfs.ViewFs$InternalDirOfViewFs.checkPathIsSlash")}')
 # print(f'{extract_method_from_method_qlf_name("org.apache.hadoop.fs.viewfs.ViewFs.getFileChecksum")}')
+# move_test_file_to_dest('Test1.java', 'F:/Projects/UIUC/CS-527/MP2/hadoop/', 'hadoop-common-project/hadoop-common', 'org.apache.hadoop.fs.viewfs.ViewFs.getHomeDirectory')
