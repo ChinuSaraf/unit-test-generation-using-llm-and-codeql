@@ -209,8 +209,8 @@ def get_method_data(method_key, methods_json, class_json):
 
 
 def get_metadata(service_name, func_qual_name):
-    CLASS_JSON_FILE_PATH = "../output/json/class-metadata.json"
-    METHODS_JSON_FILE_PATH = "../output/json/method-metadata.json"
+    CLASS_JSON_FILE_PATH = "output/json/class-metadata.json"
+    METHODS_JSON_FILE_PATH = "output/json/method-metadata.json"
 
     # service_name : replace `/` with `.`
     service_name = service_name.replace('/', '.')
@@ -236,7 +236,7 @@ def get_metadata(service_name, func_qual_name):
         method_key, methods_json, class_json)
 
     if status == "-1":
-        return "0", class_vars, class_methods, "", "", ""
+        return "0", class_qual_name, class_vars, class_methods, "", ""
 
     return "1", class_qual_name, class_vars, class_methods, method_params, method_vars
 

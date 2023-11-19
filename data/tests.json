@@ -1,5 +1,8 @@
 {
-	"init": "For the <LANG> function with comments given in the variable 'code' below, write unit test for testing the function. Follow the instructions carefully. Instructions: Import all the required packages, Mock all the functions and classes required by the method.",
-	"1": "code:",
-	"2": "Refactor the unit test produced, make sure it's runnable and efficient."
+	"init": "",
+	"1": "Consider following target function from the variable 'CODE'.",
+	"2": "Consider following metadata of target function's parent class stored in the variable 'PARENT_CLASS'.",
+	"3": "Consider following metadata of target function's parameters stored in the variable 'PARAMETERS'.",
+	"4": "Consider following metadata of target function's local variables stored in the variable 'LOCAL_VARIABLES'.",
+	"5": "For the Java function from variable 'CODE' below write a junit test. Use the metadata of classes from variables - PARENT_CLASS, PARAMETERS, and LOCAL_VARIABLES. Generate the junit test with a runnable java test file. Enclose the generated java file in `<JunitTest></JunitTest>` tag. Follow the instructions carefully. \n\nInstructions: \n1. Import all the required packages and mock all the functions and classes the method requires. \n2. Add assert statements at the end. \n3. Import classes using qualifiedName provided in PARENT_CLASS, PARAMETERS, and LOCAL_VARIABLES."
 }

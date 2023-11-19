@@ -25,19 +25,19 @@ class Prompt(ABC):
 
     # Dataset
     def get_code(self):
-        return self.data['function']
+        return self.data['functionStr']
 
     def get_func_id(self):
-        return str(self.data['func_id'])
+        return str(self.data['funcId'])
 
-    def get_project_repo(self):
-        return self.data['project_repo']
+    # def get_project_repo(self):
+    #     return self.data['project_repo']
 
-    def get_location(self):
-        return self.data['location']
+    # def get_location(self):
+    #     return self.data['location']
 
-    def get_flag(self):
-        return self.data['flag']
+    def get_difficulty_level(self):
+        return self.data['difficultyLevel']
 
     # def get_comment(self):
     # 	return self.data[str(self.idx)]['comment']

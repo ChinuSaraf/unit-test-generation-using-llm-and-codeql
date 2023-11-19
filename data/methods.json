@@ -1,14 +1,10 @@
 [
-    {
-    "func_id": 1,
-    "project_repo": "https://github.com/Esri/geometry-api-java",
-    "location": "src/main/java/com/esri/core/geometry/MultiVertexGeometryImpl.java",
-    "function_name": "_attributeStreamIsAllocated",
-    "function": "\tpublic boolean _attributeStreamIsAllocated(int semantics) {\n\t\tthrowIfEmpty();\n\n\t\tint attributeIndex = m_description.getAttributeIndex(semantics);\n\n\t\tif (attributeIndex >= 0 && m_vertexAttributes[attributeIndex] != null)\n\t\t\treturn true;\n\n\t\treturn false;\n\t}",
-    "non_primitive_data_objects": "",
-    "primitive_data_objects": "",
-    "input": "",
-    "expected_output": "",
-    "flag": "easy"
+  {
+    "functionId": "1",
+    "functionQualifiedName": "org.apache.hadoop.fs.viewfs.ViewFs.getHomeDirectory",
+    "serviceName": "hadoop-common-project/hadoop-common",
+    "noOfNonPrimitiveParameters": 0,
+    "functionStr": "public Path getHomeDirectory() {\n    if (homeDir == null) {\n      String base = fsState.getHomeDirPrefixValue();\n      if (base == null) {\n        base = \"/user\";\n      }\n      homeDir = (base.equals(\"/\") ?\n        this.makeQualified(new Path(base + ugi.getShortUserName())):\n        this.makeQualified(new Path(base + \"/\" + ugi.getShortUserName())));\n    }\n    return homeDir;\n  }",
+    "difficultyLevel": "easy"
   }
 ]
