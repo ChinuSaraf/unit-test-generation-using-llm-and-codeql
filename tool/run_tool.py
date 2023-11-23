@@ -129,6 +129,8 @@ def chat(i, task, out, meta_data_arr):
 
 def tests(i, data_json, out, meta_data_arr, mode_of_exec):
     out.append("# Task: Generate Tests")
+    out.append(f"## Mode of Execution:")
+    out.append(f"{mode_dict[mode_of_exec]}")
     out.append("---")
     test = Tests(i, data_json, mode_of_exec)
     chat(i, test, out, meta_data_arr, )
@@ -147,6 +149,14 @@ def read_data(data_path):
 # Mode 0 : Without Meta-data, Mode 1: With only method's class meta-data, Mode 2: With only method_params,
 # Mode 3: With only method_vars, Mode 4: With all Meta-data
 # Default: Mode 4
+mode_dict = {
+    0: "Running the script without any Meta-data (Check `./output/generated-tests/wo-metadata` folder)",
+    1: "Running the script with only the Method's Class Meta-data (Check `./output/generated-tests/class-metadata` folder)",
+    2: "Running the script with only the Method's Parameter Meta-data (Check `./output/generated-tests/method-params` folder)",
+    3: "Running the script with only the Method's Variable Meta-data (Check `./output/generated-tests/method-vars` folder)",
+    4: "Running the script with all the Meta-data- Class, Method Parameters, Method Variables (Check `./output/generated-tests/all` folder)"
+}
+
 p = argparse.ArgumentParser()
 
 p.add_argument('--mode', dest='mode',
@@ -171,7 +181,7 @@ else:
     # Only run for 'medium' type of datapoints
     data_points = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28]
 
-print(f'>>> Mode of execution: {mode_of_exec}')
+print(f'>>> Mode of execution: {mode_dict[mode_of_exec]}')
 print(f'>>> Datapoints: {data_points}')
 
 for i in data_points:
@@ -208,5 +218,6 @@ for i in data_points:
     tests(i+1, data_json[i], out, meta_data_arr, mode_of_exec)
 
     is_first = False
+    break
 
 print(f'Task Completed')

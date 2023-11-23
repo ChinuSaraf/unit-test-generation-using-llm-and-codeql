@@ -5,7 +5,7 @@ class Prompt(ABC):
     prompt = None
     data = None
     idx = 1
-    lang = None
+    mode_of_exec = 4
 
     @abstractmethod
     def parse_response(self, prompt_idx, response):
