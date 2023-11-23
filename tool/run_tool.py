@@ -143,26 +143,29 @@ def read_data(data_path):
 
 
 # Script begins here
-# if __name__ == 'main':
+
 # Mode 0 : Without Meta-data, Mode 1: With only method's class meta-data, Mode 2: With only method_params,
 # Mode 3: With only method_vars, Mode 4: With all Meta-data
 # Default: Mode 4
 p = argparse.ArgumentParser()
 
 p.add_argument('--mode', dest='mode',
-               default='4', help='Describe the mode of execution')
+               default=4, help='Describe the mode of execution', type=int)
 
 args = p.parse_args()
+
+# Get mode of execution
 mode_of_exec = args.mode
 
 data_path = "../data/methods.json"
 data_json = read_data(data_path)
 is_first = True
 
-if int(mode_of_exec) >= 5:
-    mode_of_exec = '4'
+# If any t
+if mode_of_exec >= 5 or mode_of_exec < 0:
+    mode_of_exec = 4
 
-if mode_of_exec == '4':
+if mode_of_exec == 4:
     data_points = [i for i in range(len(data_json))]
 else:
     # Only run for 'medium' type of datapoints
@@ -175,6 +178,7 @@ for i in data_points:
     out = []
     # Unit test generation
     print(f'Starting UNIT TEST GENERATION task for the object #{i + 1}...')
+
     # Get the meta-data for the current method
     service_name = data_json[i]['serviceName']
     method_qlf_name = data_json[i]['functionQualifiedName']
@@ -182,22 +186,27 @@ for i in data_points:
         service_name, method_qlf_name)
     method_class_name = extract_class_from_class_qlf_name(class_qual_name)
 
+    # Creating a list for meta-data to be used later in the prompts
     meta_data_arr = [method_class_name]
     first_ = {
         "qualifiedName": class_qual_name,
-        "variables": class_vars if mode_of_exec == '1' or mode_of_exec == '4' else [],
-        "methods": class_methods if mode_of_exec == '1' or mode_of_exec == '4' else []
+        "variables": class_vars if mode_of_exec == 1 or mode_of_exec == 4 else [],
+        "methods": class_methods if mode_of_exec == 1 or mode_of_exec == 4 else []
     }
 
     meta_data_arr.append(f'{method_class_name}: {json.dumps(first_)}')
     meta_data_arr.append(""
-                         if method_params == "" or mode_of_exec in ['0', '1', '3'] else json.dumps(method_params))
+                         if method_params == "" or mode_of_exec in [0, 1, 3] else json.dumps(method_params))
     meta_data_arr.append("" if method_vars == "" or mode_of_exec in [
-                         '0', '1', '2'] else json.dumps(method_vars))
+                         0, 1, 2] else json.dumps(method_vars))
+
+    # Pausing the script for runs other than 1st because of Rate Limiting rules
     if not is_first:
         time.sleep(60)
 
+    # Call to create Unit tests
     tests(i+1, data_json[i], out, meta_data_arr, mode_of_exec)
+
     is_first = False
 
 print(f'Task Completed')

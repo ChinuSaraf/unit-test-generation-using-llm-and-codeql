@@ -4,9 +4,9 @@ from prompt.prompt import Prompt
 
 
 class Tests(Prompt):
-    path = "../data/tests.json"
+    path = "../data/prompts.json"
 
-    def __init__(self, idx, data, mode_of_exec="4"):
+    def __init__(self, idx, data, mode_of_exec=4):
         self.idx = idx
         self.data = data
         self.mode_of_exec = mode_of_exec
@@ -33,6 +33,7 @@ class Tests(Prompt):
         start = "<JunitTest>"
         end = "</JunitTest>"
 
+        # Find the location of start and end
         try:
             start_idx = message.index(start)
             start_len = len(start)
@@ -48,18 +49,18 @@ class Tests(Prompt):
         code = message[start_idx + start_len: end_idx]
         code = code.replace("```", "")
 
-        if self.mode_of_exec == '4':
-            with open("output/generated-tests/" + str(idx) + ".java", "w") as file:
-                file.write(code)
+        # Depending upon the mode of execution select the sub-directory where the Java file will be written
+        if self.mode_of_exec == 0:
+            sub_dir = 'wo-metadata'
+        elif self.mode_of_exec == 1:
+            sub_dir = 'class-metadata'
+        elif self.mode_of_exec == 2:
+            sub_dir = 'method-params'
+        elif self.mode_of_exec == 3:
+            sub_dir = 'method-vars'
         else:
-            if self.mode_of_exec == '0':
-                sub_dir = 'wo-metadata'
-            elif self.mode_of_exec == '1':
-                sub_dir = 'class-metadata'
-            elif self.mode_of_exec == '2':
-                sub_dir = 'method-params'
-            elif self.mode_of_exec == '3':
-                sub_dir = 'method-vars'
+            sub_dir = 'all'
 
-            with open("output/generated-tests/" + sub_dir + "/" + str(idx) + ".java", "w") as file:
-                file.write(code)
+        # Writing the Java file
+        with open("output/generated-tests/" + sub_dir + "/" + str(idx) + ".java", "w") as file:
+            file.write(code)
