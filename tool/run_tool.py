@@ -27,7 +27,7 @@ def chat(i, task, out, meta_data_arr):
     idx = 1
     instruction_str = ""
     repeat = False
-
+    itr = 1
     task_prompt = [
         {
             "role": "system",
@@ -41,8 +41,8 @@ def chat(i, task, out, meta_data_arr):
             idx += 1
             continue
 
-        # Beacuse of the Rate limit applied by OpenAI 3 requests per minute
-        if idx % 3 == 0:
+        # Beacuse of the Rate limit applied by OpenAI: 3 requests per minute
+        if itr % 3 == 0:
             time.sleep(60)
 
         # Get prompt from the multi-prompt list
@@ -122,6 +122,7 @@ def chat(i, task, out, meta_data_arr):
         task_prompt.append({"role": "assistant", "content": reply})
 
         idx += 1
+        itr += 1
         if not task.parse_response(idx, reply):
             task.store(str(i) + "-" + str(int(time.time())), out)
             break
@@ -171,8 +172,9 @@ data_path = "../data/methods.json"
 data_json = read_data(data_path)
 is_first = True
 
-# If any t
+# If invalid mode selected, change it to default
 if mode_of_exec >= 5 or mode_of_exec < 0:
+    print(f'Selected Invalid Mode of Execution, so running the script for default mode: 4')
     mode_of_exec = 4
 
 if mode_of_exec == 4:
@@ -218,6 +220,5 @@ for i in data_points:
     tests(i+1, data_json[i], out, meta_data_arr, mode_of_exec)
 
     is_first = False
-    break
 
 print(f'Task Completed')
