@@ -3,8 +3,9 @@
 Add following plugins in `pom.xml` of the service for which test file needs
 to be executed.
 ```
-<plugins>
-...
+<build>
+    <plugins>
+    ...
     <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -23,23 +24,24 @@ to be executed.
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
-        <configuration>
-          <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
-          <forkCount>1</forkCount>
-          <argLine>@{argLine} -Xmx1024m -XX:MaxPermSize=256m</argLine>
-        </configuration>
-      </plugin>
-  </plugins>
+    </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version>
+            <configuration>
+              <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+              <forkCount>1</forkCount>
+              <argLine>@{argLine} -Xmx1024m -XX:MaxPermSize=256m</argLine>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 ```
 
 ## Executing Specific Test file
 To run a single test file - `SampleTest.java`, execute following command at
-root location of the project:
+root location of the microservice:
 ```
 mvn test -Dtest="SampleTest"
 ```
