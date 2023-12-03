@@ -162,11 +162,15 @@ p = argparse.ArgumentParser()
 
 p.add_argument('--mode', dest='mode',
                default=4, help='Describe the mode of execution', type=int)
+p.add_argument('--n', dest='num_datapoints',
+               default=1, help='Enter the number of data points to run', type=int)
 
 args = p.parse_args()
 
 # Get mode of execution
 mode_of_exec = args.mode
+# Get num of data points
+num_datapoints = args.num_datapoints
 
 data_path = "../data/methods.json"
 data_json = read_data(data_path)
@@ -177,11 +181,20 @@ if mode_of_exec >= 5 or mode_of_exec < 0:
     print(f'Selected Invalid Mode of Execution, so running the script for default mode: 4')
     mode_of_exec = 4
 
+# If invalid num_datapoints entered, change it to default
+if num_datapoints < 1 or num_datapoints > 30:
+    num_datapoints = 1
+
 if mode_of_exec == 4:
     data_points = [i for i in range(len(data_json))]
 else:
     # Only run for 'medium' type of datapoints
     data_points = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28]
+
+data_points = data_points[:min(len(data_points), num_datapoints)]
+
+if mode_of_exec == 4 and num_datapoints == 1:
+    data_points = [27]
 
 print(f'>>> Mode of execution: {mode_dict[mode_of_exec]}')
 print(f'>>> Datapoints: {data_points}')
