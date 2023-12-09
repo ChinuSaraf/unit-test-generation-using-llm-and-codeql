@@ -14,6 +14,11 @@ To overcome the challenge, the project proposes leveraging CodeQL for static ana
 
 This project initiative seeks to optimize unit test generation by combining the strengths of CodeQL's static analysis capabilities with ChatGPT's natural language processing prowess, potentially overcoming the limitations observed during the initial phases of testing ChatGPT for unit test generation in Java.
 
+### Project Report:
+[PDF](extras/final-report/Unit-Test-Generation-using-LLM-and-CodeQL.pdf)
+<br>
+[Notion](https://www.notion.so/Unit-Test-Generation-using-LLM-and-CodeQL-3e207041ca234802817e6c175158e566?pvs=4)
+
 ## Architecture Diagram:
 
 ---
